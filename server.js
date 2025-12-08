@@ -1,6 +1,6 @@
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
-
+import cors from '@fastify/cors';   
 import dbPlugin from './plugins/db.js';
 import movieRoutes from './routes/movies/index.js';
 
@@ -13,6 +13,12 @@ dotenv.config();
 //Skapar en ny fastify-instans
 const fastify = Fastify({
   logger: true //gör att fastify loggar inkommande requests (bra för utveckling och felsökning)
+});
+
+//Slå på CORS innan plugins och routes
+fastify.register(cors, {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
 
 //Registrerar Postgres-pluginet. 
