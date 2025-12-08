@@ -51,8 +51,8 @@ export default function createMoviesController(fastify) {
          * validering av body sker i routes via Fastifys schema
          */
         create: async (request, reply) => {
-            const { title, rating, isScary } = request.body;
-            const newMovie = await model.create({ title, rating, isScary }); //modellens create()-metod sköter SQL INSERT och returnerar den nya
+            const { title, rating, isScary, seen } = request.body;
+            const newMovie = await model.create({ title, rating, isScary, seen }); //modellens create()-metod sköter SQL INSERT och returnerar den nya
             return reply.code(201).send(newMovie); //skicka statuskod 201 när en resurs skapas
         },
 
@@ -64,9 +64,9 @@ export default function createMoviesController(fastify) {
          */
         update: async (request, reply) => {
             const { id } = request.params;
-            const { title, rating, isScary } = request.body;
+            const { title, rating, isScary, seen } = request.body;
 
-            const updatedMovie = await model.update(id, { title, rating, isScary }); //Returnerar null om ID inte finns
+            const updatedMovie = await model.update(id, { title, rating, isScary, seen }); //Returnerar null om ID inte finns
 
             if (!updatedMovie) {
                 return reply.code(404).send({ error: 'Movie not found' }); //Felkod 404 om filmen inte hittas

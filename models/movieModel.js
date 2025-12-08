@@ -24,7 +24,7 @@ export default class MovieModel {
   */
   async getAll() {
     const { rows } = await this.pg.query(
-      'SELECT id, title, rating, is_scary FROM movies ORDER BY id'
+      'SELECT id, title, rating, is_scary, seen FROM movies ORDER BY id'
     );
     return rows.map(this._mapRowToMovie);
   }
@@ -36,7 +36,7 @@ export default class MovieModel {
    */
   async getById(id) {
     const { rows } = await this.pg.query(
-      'SELECT id, title, rating, is_scary FROM movies WHERE id = $1',
+      'SELECT id, title, rating, is_scary, seen FROM movies WHERE id = $1',
       [id]
     );
     return rows[0] ? this._mapRowToMovie(rows[0]) : null;
@@ -47,12 +47,12 @@ export default class MovieModel {
    * - RETURNING gör att PostgreSQL skickar tillbaka den nya raden direkt,
    * så att API:t kan returnera den till klienten
    */
-  async create({ title, rating, isScary }) {
+async create({ title, rating, isScary, seen = false }) {
     const { rows } = await this.pg.query(
-      `INSERT INTO movies (title, rating, is_scary)
-       VALUES ($1, $2, $3)
-       RETURNING id, title, rating, is_scary`,
-      [title, rating, isScary]
+      `INSERT INTO movies (title, rating, is_scary, seen)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, title, rating, is_scary, seen`,
+      [title, rating, isScary, seen]
     );
     return this._mapRowToMovie(rows[0]);
   }
@@ -61,13 +61,13 @@ export default class MovieModel {
    * Uppdaterar en film i databasen baserad på id
    * - om RETURNING inte returnerar någon rad betyder det att filmen inte hittades
    */
-  async update(id, { title, rating, isScary }) {
+   async update(id, { title, rating, isScary, seen = false }) {
     const { rows } = await this.pg.query(
       `UPDATE movies
-       SET title = $1, rating = $2, is_scary = $3
-       WHERE id = $4
-       RETURNING id, title, rating, is_scary`,
-      [title, rating, isScary, id]
+       SET title = $1, rating = $2, is_scary = $3, seen = $4
+       WHERE id = $5
+       RETURNING id, title, rating, is_scary, seen`,
+      [title, rating, isScary, seen, id]
     );
     return rows[0] ? this._mapRowToMovie(rows[0]) : null;
   }
@@ -77,7 +77,7 @@ export default class MovieModel {
    * - rowCount anger hur många rader som faktiskt raderades
    * - returnerar true om något raderats, annars false
    */
-  async delete(id) {
+   async delete(id) {
     const { rowCount } = await this.pg.query(
       'DELETE FROM movies WHERE id = $1',
       [id]
@@ -98,7 +98,8 @@ export default class MovieModel {
       id: row.id,
       title: row.title,
       rating: Number(row.rating),
-      isScary: row.is_scary
+      isScary: row.is_scary,
+      seen: row.seen
     };
   }
 }

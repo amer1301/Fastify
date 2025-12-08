@@ -38,14 +38,22 @@ async function dbPlugin(fastify, options) {
     const client = await fastify.pg.connect();
     try {
         //Skapa tabell om den inte redan finns
-      await client.query(`
-        CREATE TABLE IF NOT EXISTS movies (
-          id SERIAL PRIMARY KEY,
-          title TEXT NOT NULL,
-          rating NUMERIC(3,1) NOT NULL,
-          is_scary BOOLEAN NOT NULL
-        );
-      `);
+await client.query(`
+  CREATE TABLE IF NOT EXISTS movies (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    rating NUMERIC(3,1) NOT NULL,
+    is_scary BOOLEAN NOT NULL,
+    seen BOOLEAN NOT NULL DEFAULT false
+  );
+`);
+
+// säkerställ att kolumnen finns även om tabellen redan fanns sedan innan
+await client.query(`
+  ALTER TABLE movies
+  ADD COLUMN IF NOT EXISTS seen BOOLEAN NOT NULL DEFAULT false;
+`);
+
     } finally {
         //Släpp connection tillbaka till poolen
       client.release();

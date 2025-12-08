@@ -24,15 +24,15 @@ const movieParamsSchema = {
  */
 const movieBodySchema = {
   type: 'object',
-  required: ['title', 'rating', 'isScary'],
+  required: ['title', 'rating', 'isScary'], // seen är frivillig
   additionalProperties: false,
   properties: {
     title: { type: 'string', minLength: 1 },
     rating: { type: 'number', minimum: 0, maximum: 10 },
-    isScary: { type: 'boolean' }
+    isScary: { type: 'boolean' },
+    seen: { type: 'boolean', default: false }   // 👈 NYTT
   }
 };
-
 /**
  * Schema för hur en film ska se ut i API-svaret.
  * Används i fastifys auto-genererade dokumentation
@@ -44,7 +44,8 @@ const movieResponseSchema = {
     id: { type: 'integer' },
     title: { type: 'string' },
     rating: { type: 'number' },
-    isScary: { type: 'boolean' }
+    isScary: { type: 'boolean' },
+    seen: { type: 'boolean' }
   }
 };
 
