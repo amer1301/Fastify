@@ -1,5 +1,8 @@
 📘 Horror Movies API – Fastify + PostgreSQL
 
+**Publik URL:**  
+https://fastify-laboration2-2.onrender.com
+
 En REST-baserad webbtjänst byggd med Fastify, Node.js och PostgreSQL.
 Projektet uppfyller kraven för CRUD-hantering, datavalidering, databaslagring och korrekt route-struktur enligt Fastifys rekommendationer.
 
